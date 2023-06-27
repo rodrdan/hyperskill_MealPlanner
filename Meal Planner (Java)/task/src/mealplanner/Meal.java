@@ -1,76 +1,98 @@
 package mealplanner;
+import java.sql.*;
 import java.util.*;
 
 public class Meal {
     private static final Scanner keyboard = new Scanner(System.in);
-    private static final List<String> categoryOptions = List.of("breakfast", "lunch", "dinner");
-
+    /*
     private static Map<Integer, Map<String, String>> mealDatabase = new LinkedHashMap<>();
     private Map<String, String> mealInfo = new LinkedHashMap<>();
     private int id;
     private static Integer counter = 1;
+     */
 
     public Meal() {
+        createTable();
+        addCategory();
+        addName();
+        addIngredients();
+        /*
         this.mealInfo.put("Category", addCategory());
         this.mealInfo.put("Name", addName());
         this.mealInfo.put("Ingredients", addIngredients());
         this.id = counter;
         counter++;
-        mealDatabase.put(this.id, this.mealInfo);
+        mealDatabase.put(this.id, this.mealInfo);*/
+    }
+    private void createTable() {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS meals (" +
+                        "id SERIAL PRIMARY KEY," +
+                        "category VARCHAR(30)," +
+                        "name VARCHAR(100)," +
+                        "ingredients VARCHAR(255)");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private String addCategory() {
+    private void addCategory() {
         String inputCategory;
         do {
             System.out.println("Which meal do you want to add (breakfast, lunch, dinner)?");
             inputCategory = keyboard.nextLine();
-        } while (!isCategoryValid(inputCategory));
-        return inputCategory;
-    }
-
-    private boolean isCategoryValid(String category) {
-        boolean check = categoryOptions.contains(category);
-        if (!check) {
-            System.out.println("Wrong meal category! Choose from: breakfast, lunch, dinner.");
+        } while (!Validator.isCategoryValid(inputCategory));
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("INSERT INTO meals (category)" +
+                        "VALUES (" + inputCategory + ")");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return check;
     }
 
-    private String addName() {
+    private void addName() {
         String inputName;
         do {
             System.out.println("Input the meal's name:");
             inputName = keyboard.nextLine();
-        } while(!isNameValid(inputName));
-        return inputName;
-    }
-    private boolean isNameValid(String name) {
-        boolean check = true;
-        if (name.isEmpty() || name.isBlank() || !name.matches("[a-zA-Z ]+")) {
-            check = false;
-            System.out.println("Wrong format. Use letters only!");
+        } while(!Validator.isNameValid(inputName));
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("INSERT INTO meals (name)" +
+                        "VALUES (" + inputName + ")");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return check;
     }
 
-    private String addIngredients() {
-        String[] inputIngredients;
+    private void addIngredients() {
+        String inputIngredients;
         do {
             System.out.println("Input the ingredients:");
-            inputIngredients = keyboard.nextLine().split(",");
-        } while (!isIngredientListValid(inputIngredients));
-        return Arrays.toString(inputIngredients);
-    }
-
-    private boolean isIngredientListValid(String[] ingredients) {
-        boolean check = true;
-        for (String s : ingredients) {
-            if (s.isEmpty() || s.isBlank() || !s.matches("[a-zA-Z ]+")) {
-                check = false;
-                System.out.println("Wrong format. Use letters only!");
+            //inputIngredients = keyboard.nextLine().split(",");
+            inputIngredients = keyboard.nextLine();
+        } while (!Validator.isIngredientListValid(inputIngredients));
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("INSERT INTO meals (ingredients)" +
+                        "VALUES (" + inputIngredients + ")");
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return check;
     }
 
     public static void printAll() {
