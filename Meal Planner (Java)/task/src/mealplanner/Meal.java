@@ -1,5 +1,4 @@
 package mealplanner;
-
 import java.util.*;
 
 public class Meal {
