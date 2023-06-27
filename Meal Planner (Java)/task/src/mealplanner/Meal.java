@@ -6,22 +6,18 @@ public class Meal {
     private static final Scanner keyboard = new Scanner(System.in);
     private static final List<String> categoryOptions = List.of("breakfast", "lunch", "dinner");
 
-    /*
     private static Map<Integer, Map<String, String>> mealDatabase = new LinkedHashMap<>();
     private Map<String, String> mealInfo = new LinkedHashMap<>();
     private int id;
-    private static Integer counter = 1;*/
+    private static Integer counter = 1;
 
     public Meal() {
-
-
-        /*
         this.mealInfo.put("Category", addCategory());
         this.mealInfo.put("Name", addName());
         this.mealInfo.put("Ingredients", addIngredients());
         this.id = counter;
         counter++;
-        mealDatabase.put(this.id, this.mealInfo);*/
+        mealDatabase.put(this.id, this.mealInfo);
     }
 
     private String addCategory() {
