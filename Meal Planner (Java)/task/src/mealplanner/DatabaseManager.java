@@ -1,5 +1,6 @@
 package mealplanner;
-import org.postgresql.ds. PGSimpleDataSource;
+import org.postgresql.ds.PGSimpleDataSource;
+
 import java.sql.*;
 
 public class DatabaseManager {
@@ -22,6 +23,39 @@ public class DatabaseManager {
         }
         return connection;
     }
+
+    public static ResultSet getData() {
+        ResultSet data = null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                data = statement.executeQuery("SELECT * FROM meals");
+                System.out.println("Data retrieved.");
+            } catch (SQLException e) {
+                System.out.println("Data not retrieved due to an error.");
+                e.printStackTrace();
+
+            }
+        } catch (SQLException e) {
+            System.out.println("Data not retrieved due to an error.");
+            e.printStackTrace();
+        }
+        return data;
+
+    }
+
+    /* public static boolean databaseIsEmpty() {
+        boolean isEmpty;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                isEmpty = statement.execute("SELECT * FROM meals");
+                return isEmpty;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    } */
 
 
 }

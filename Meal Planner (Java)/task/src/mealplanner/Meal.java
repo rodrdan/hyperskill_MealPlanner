@@ -12,7 +12,7 @@ public class Meal {
      */
 
     public Meal() {
-        createTable();
+        createTables();
         addCategory();
         addName();
         addIngredients();
@@ -24,14 +24,17 @@ public class Meal {
         counter++;
         mealDatabase.put(this.id, this.mealInfo);*/
     }
-    private void createTable() {
+    private void createTables() {
         try (Connection conn = DatabaseManager.getConnection()) {
             try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("CREATE TABLE IF NOT EXISTS meals (" +
-                        "id SERIAL PRIMARY KEY," +
                         "category VARCHAR(30)," +
-                        "name VARCHAR(100)," +
-                        "ingredients VARCHAR(255)");
+                        "meal VARCHAR(100)," +
+                        "meal_id SERIAL PRIMARY KEY");
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS ingredients (" +
+                        "ingredient (VARCHAR 50)," +
+                        "ingredient_id SERIAL PRIMARY KEY (INTEGER)," +
+                        "meal_id (INTEGER)");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -66,7 +69,7 @@ public class Meal {
         } while(!Validator.isNameValid(inputName));
         try (Connection conn = DatabaseManager.getConnection()) {
             try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("INSERT INTO meals (name)" +
+                statement.executeUpdate("INSERT INTO meals (meal)" +
                         "VALUES (" + inputName + ")");
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -94,11 +97,21 @@ public class Meal {
             e.printStackTrace();
         }
     }
-
     public static void printAll() {
-        if (mealDatabase.isEmpty()) {
+        try {
+            ResultSet data = DatabaseManager.getData();
+            if (data.next() == false) {
+
+
+        }
+
+
             System.out.println("No meals saved. Add a meal first.");
         } else {
+
+
+
+            /*
             for (var entry : mealDatabase.entrySet()) {
                 Map<String, String> mealInfo = entry.getValue();
                 for (var meal : mealInfo.entrySet()) {
@@ -110,7 +123,7 @@ public class Meal {
                             System.out.println(s.trim().replace("[", "").replace("]", ""));
                         }
                     } else {
-                        System.out.println(meal.getKey() + ": " + meal.getValue());
+                        System.out.println(meal.getKey() + ": " + meal.getValue());*/
                     }
                 }
             }
