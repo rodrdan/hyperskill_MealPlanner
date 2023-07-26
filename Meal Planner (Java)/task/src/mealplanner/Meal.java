@@ -4,6 +4,9 @@ import java.util.*;
 
 public class Meal {
     private static final Scanner keyboard = new Scanner(System.in);
+    private static int mealCounter = 0;
+
+
     /*
     private static Map<Integer, Map<String, String>> mealDatabase = new LinkedHashMap<>();
     private Map<String, String> mealInfo = new LinkedHashMap<>();
@@ -12,7 +15,6 @@ public class Meal {
      */
 
     public Meal() {
-        createTables();
         addCategory();
         addName();
         addIngredients();
@@ -24,24 +26,7 @@ public class Meal {
         counter++;
         mealDatabase.put(this.id, this.mealInfo);*/
     }
-    private void createTables() {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS meals (" +
-                        "category VARCHAR(30)," +
-                        "meal VARCHAR(100)," +
-                        "meal_id SERIAL PRIMARY KEY");
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS ingredients (" +
-                        "ingredient (VARCHAR 50)," +
-                        "ingredient_id SERIAL PRIMARY KEY (INTEGER)," +
-                        "meal_id (INTEGER)");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     private void addCategory() {
         String inputCategory;
@@ -86,18 +71,21 @@ public class Meal {
             //inputIngredients = keyboard.nextLine().split(",");
             inputIngredients = keyboard.nextLine();
         } while (!Validator.isIngredientListValid(inputIngredients));
+        String[] ingredientsArray = inputIngredients.split(",");
         try (Connection conn = DatabaseManager.getConnection()) {
             try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("INSERT INTO meals (ingredients)" +
+
+                statement.executeUpdate("INSERT INTO ingredients (ingredient)" +
                         "VALUES (" + inputIngredients + ")");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        } */
     }
     public static void printAll() {
+        int mealID = 0;
         try {
             ResultSet data = DatabaseManager.getData();
             if (data.next() == false) {

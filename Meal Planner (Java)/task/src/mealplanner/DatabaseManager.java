@@ -24,6 +24,25 @@ public class DatabaseManager {
         return connection;
     }
 
+    public static void createTables() {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (Statement statement = conn.createStatement()) {
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS meals (" +
+                        "category VARCHAR(30)," +
+                        "meal VARCHAR(100)," +
+                        "meal_id SERIAL PRIMARY KEY");
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS ingredients (" +
+                        "ingredient (VARCHAR 50)," +
+                        "ingredient_id SERIAL PRIMARY KEY (INTEGER)," +
+                        "meal_id (INTEGER)");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static ResultSet getData() {
         ResultSet data = null;
         try (Connection conn = DatabaseManager.getConnection()) {
