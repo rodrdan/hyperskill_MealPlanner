@@ -4,9 +4,7 @@ import java.util.*;
 
 public class Meal {
     private static final Scanner keyboard = new Scanner(System.in);
-    private static int mealCounter = 0;
-
-
+    private Integer mealID;
     /*
     private static Map<Integer, Map<String, String>> mealDatabase = new LinkedHashMap<>();
     private Map<String, String> mealInfo = new LinkedHashMap<>();
@@ -16,8 +14,8 @@ public class Meal {
 
     public Meal() {
         addCategory();
-        addName();
-        addIngredients();
+        addName(mealID);
+        addIngredients(mealID);
         /*
         this.mealInfo.put("Category", addCategory());
         this.mealInfo.put("Name", addName());
@@ -27,9 +25,9 @@ public class Meal {
         mealDatabase.put(this.id, this.mealInfo);*/
     }
 
-
     private void addCategory() {
         String inputCategory;
+        ResultSet resultSet;
         do {
             System.out.println("Which meal do you want to add (breakfast, lunch, dinner)?");
             inputCategory = keyboard.nextLine();
@@ -38,6 +36,9 @@ public class Meal {
             try (Statement statement = conn.createStatement()) {
                 statement.executeUpdate("INSERT INTO meals (category)" +
                         "VALUES (" + inputCategory + ")");
+                resultSet = statement.executeQuery("SELECT * FROM meals");
+                this.mealID = resultSet.getInt(3);
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -46,7 +47,7 @@ public class Meal {
         }
     }
 
-    private void addName() {
+    private void addName(Integer mealID) {
         String inputName;
         do {
             System.out.println("Input the meal's name:");
@@ -54,8 +55,10 @@ public class Meal {
         } while(!Validator.isNameValid(inputName));
         try (Connection conn = DatabaseManager.getConnection()) {
             try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("INSERT INTO meals (meal)" +
-                        "VALUES (" + inputName + ")");
+                statement.executeUpdate("UPDATE meals" +
+                        "SET meal = " + inputName +
+                        "WHERE meal_id = " + mealID + ")");
+
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -64,39 +67,26 @@ public class Meal {
         }
     }
 
-    private void addIngredients() {
+    private void addIngredients(Integer mealID) {
         String inputIngredients;
         do {
             System.out.println("Input the ingredients:");
-            //inputIngredients = keyboard.nextLine().split(",");
             inputIngredients = keyboard.nextLine();
         } while (!Validator.isIngredientListValid(inputIngredients));
         String[] ingredientsArray = inputIngredients.split(",");
         try (Connection conn = DatabaseManager.getConnection()) {
             try (Statement statement = conn.createStatement()) {
-
-                statement.executeUpdate("INSERT INTO ingredients (ingredient)" +
-                        "VALUES (" + inputIngredients + ")");
+                for (String s : ingredientsArray) {
+                    statement.executeUpdate("INSERT INTO ingredients (ingredient, meal_id)" +
+                            "VALUES (" + inputIngredients + "," + mealID + ")");
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } */
-    }
-    public static void printAll() {
-        int mealID = 0;
-        try {
-            ResultSet data = DatabaseManager.getData();
-            if (data.next() == false) {
-
-
         }
-
-
-            System.out.println("No meals saved. Add a meal first.");
-        } else {
-
+    }
 
 
             /*
@@ -112,9 +102,8 @@ public class Meal {
                         }
                     } else {
                         System.out.println(meal.getKey() + ": " + meal.getValue());*/
-                    }
-                }
-            }
-        }
-    }
+
+
+
+
 }

@@ -1,4 +1,5 @@
 package mealplanner;
+import java.sql.ResultSet;
 import java.util.Scanner;
 
 public class Main {
@@ -6,6 +7,7 @@ public class Main {
 
     Scanner keyboard = new Scanner(System.in);
     DatabaseManager.createTables();
+    ResultSet allData;
 
     while (true) {
       System.out.println("What would you like to do (add, show, exit)?");
@@ -16,7 +18,8 @@ public class Main {
           System.out.println("The meal has been added!");
           break;
         case "show":
-          Meal.printAll();
+          DatabaseManager.getData();
+          DatabaseManager.printAll();
           break;
         case "exit":
           System.out.println("Bye!");
