@@ -13,9 +13,14 @@ public class Meal {
      */
 
     public Meal() {
-        addCategory();
-        addName(mealID);
-        addIngredients(mealID);
+        try {
+            addCategory();
+            addName(mealID);
+            addIngredients(mealID);
+            DatabaseManager.getData();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         /*
         this.mealInfo.put("Category", addCategory());
         this.mealInfo.put("Name", addName());
@@ -25,66 +30,46 @@ public class Meal {
         mealDatabase.put(this.id, this.mealInfo);*/
     }
 
-    private void addCategory() {
+    private void addCategory() throws SQLException {
         String inputCategory;
         ResultSet resultSet;
         do {
             System.out.println("Which meal do you want to add (breakfast, lunch, dinner)?");
             inputCategory = keyboard.nextLine();
         } while (!Validator.isCategoryValid(inputCategory));
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("INSERT INTO meals (category)" +
-                        "VALUES (" + inputCategory + ")");
-                resultSet = statement.executeQuery("SELECT * FROM meals");
-                this.mealID = resultSet.getInt(3);
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Connection conn = DatabaseManager.getConnection();
+        Statement statement = conn.createStatement();
+        statement.executeUpdate("INSERT INTO meals (category)" +
+                "VALUES ('" + inputCategory + "')");
+        resultSet = statement.executeQuery("SELECT * FROM meals");
+        this.mealID = resultSet.getInt(3);
     }
 
-    private void addName(Integer mealID) {
+    private void addName(Integer mealID) throws SQLException {
         String inputName;
         do {
             System.out.println("Input the meal's name:");
             inputName = keyboard.nextLine();
         } while(!Validator.isNameValid(inputName));
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("UPDATE meals" +
-                        "SET meal = " + inputName +
-                        "WHERE meal_id = " + mealID + ")");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        Connection conn = DatabaseManager.getConnection();
+        Statement statement = conn.createStatement();
+        statement.executeUpdate("UPDATE meals" +
+                "SET meal = " + inputName +
+                "WHERE meal_id = " + mealID + ")");
     }
 
-    private void addIngredients(Integer mealID) {
+    private void addIngredients(Integer mealID) throws SQLException {
         String inputIngredients;
         do {
             System.out.println("Input the ingredients:");
             inputIngredients = keyboard.nextLine();
         } while (!Validator.isIngredientListValid(inputIngredients));
         String[] ingredientsArray = inputIngredients.split(",");
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (Statement statement = conn.createStatement()) {
-                for (String s : ingredientsArray) {
-                    statement.executeUpdate("INSERT INTO ingredients (ingredient, meal_id)" +
-                            "VALUES (" + inputIngredients + "," + mealID + ")");
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        Connection conn = DatabaseManager.getConnection();
+        Statement statement = conn.createStatement();
+        for (String s : ingredientsArray) {
+            statement.executeUpdate("INSERT INTO ingredients (ingredient, meal_id)" +
+                    "VALUES (" + inputIngredients + "," + mealID + ")");
         }
     }
 

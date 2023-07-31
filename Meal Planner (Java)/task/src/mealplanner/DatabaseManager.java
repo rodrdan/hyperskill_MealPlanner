@@ -1,6 +1,5 @@
 package mealplanner;
 import org.postgresql.ds.PGSimpleDataSource;
-
 import java.sql.*;
 
 public class DatabaseManager {
@@ -27,41 +26,27 @@ public class DatabaseManager {
         return connection;
     }
 
-    public static void createTables() {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (Statement statement = conn.createStatement()) {
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS meals (" +
-                        "category VARCHAR(30)," +
-                        "meal VARCHAR(100)," +
-                        "meal_id SERIAL PRIMARY KEY" +
-                        ");");
-                statement.executeUpdate("CREATE TABLE IF NOT EXISTS ingredients (" +
-                        "ingredient VARCHAR(50)," +
-                        "ingredient_id INT PRIMARY KEY," +
-                        "meal_id INT" +
-                        ");");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public static void createTables() throws SQLException {
+    Connection conn = DatabaseManager.getConnection();
+    Statement statement = conn.createStatement();
+    statement.executeUpdate("CREATE TABLE IF NOT EXISTS meals (" +
+            "category VARCHAR(30)," +
+            "meal VARCHAR(100)," +
+            "meal_id SERIAL PRIMARY KEY" +
+            ");");
+    statement.executeUpdate("CREATE TABLE IF NOT EXISTS ingredients (" +
+            "ingredient VARCHAR(50)," +
+            "ingredient_id INT PRIMARY KEY," +
+            "meal_id INT" +
+            ");");
     }
 
-    public static void getData() {
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (Statement statement = conn.createStatement()) {
-                dataMeals = statement.executeQuery("SELECT * FROM meals");
-                dataIngredients = statement.executeQuery("SELECT * FROM ingredients");
-                System.out.println("Data retrieved.");
-            } catch (SQLException e) {
-                System.out.println("Data not retrieved due to an error.");
-                e.printStackTrace();
-            }
-        } catch (SQLException e) {
-            System.out.println("Data not retrieved due to an error.");
-            e.printStackTrace();
-        }
+    public static void getData() throws SQLException {
+        Connection conn = DatabaseManager.getConnection();
+        Statement statement = conn.createStatement();
+        dataMeals = statement.executeQuery("SELECT * FROM meals");
+        dataIngredients = statement.executeQuery("SELECT * FROM ingredients");
+        System.out.println("Data retrieved.");
     }
 
     public static void printAll() {

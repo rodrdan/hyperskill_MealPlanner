@@ -1,13 +1,11 @@
 package mealplanner;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Main {
   public static void main(String[] args) {
-
     Scanner keyboard = new Scanner(System.in);
-    DatabaseManager.createTables();
-    ResultSet allData;
 
     while (true) {
       System.out.println("What would you like to do (add, show, exit)?");
@@ -18,7 +16,11 @@ public class Main {
           System.out.println("The meal has been added!");
           break;
         case "show":
-          DatabaseManager.getData();
+          try {
+            DatabaseManager.createTables();
+          } catch (SQLException e) {
+            e.printStackTrace();
+          }
           DatabaseManager.printAll();
           break;
         case "exit":
